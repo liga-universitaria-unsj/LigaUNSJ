@@ -1,0 +1,7 @@
+1. No cerres la terminal donde aparece VITE ready. Mientras esté ejecutándose, 
+los cambios que guarde en los archivos se reflejan en el navegador.
+Si se cierra ejecuta -> 'npm run dev'
+
+Para publicar el proyecto, cuando quiera preparar la versión final:
+'npm run build'
+Se generará la carpeta dist, que después la publicamos en Netlify.
