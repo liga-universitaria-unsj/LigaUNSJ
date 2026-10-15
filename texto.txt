@@ -5,3 +5,11 @@ Si se cierra ejecuta -> 'npm run dev'
 Para publicar el proyecto, cuando quiera preparar la versión final:
 'npm run build'
 Se generará la carpeta dist, que después la publicamos en Netlify.
+
+muestra que identidad esta viendo esta manipulando este repositorio de git
+git config user.name
+git config user.email
+
+Si aparecen datos incorrectos, configurarlos para tu usuario:
+git config --global user.name "TuNombreDeGitHub"
+git config --global user.email "TuCorreoDeGitHub"
