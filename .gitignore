@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 #anotaciones
-texto.txt
+.texto.txt
