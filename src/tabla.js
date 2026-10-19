@@ -35,3 +35,15 @@ export function calcularTabla(equipos, partidos, descuentos = []) {
   return lista.sort((a, b) =>
     b.pts - a.pts || b.dg - a.dg || b.gf - a.gf || a.equipo.nombre.localeCompare(b.equipo.nombre, "es"));
 }
+
+// Posiciones de todas las zonas de una división, y si cada zona ya terminó.
+// Se usa para armar los cruces de las copas ("1º Zona A", "5º Zona B"...).
+export function posicionesPorZona(equipos, partidos, descuentos = []) {
+  const posiciones = {}, zonaCompleta = {};
+  for (const zona of new Set(equipos.map((e) => e.zona))) {
+    const deLaZona = partidos.filter((p) => p.zona === zona);
+    posiciones[zona] = calcularTabla(equipos.filter((e) => e.zona === zona), deLaZona, descuentos);
+    zonaCompleta[zona] = deLaZona.length > 0 && deLaZona.every((p) => p.goles_local != null && p.goles_visitante != null);
+  }
+  return { posiciones, zonaCompleta };
+}

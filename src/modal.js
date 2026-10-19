@@ -12,9 +12,12 @@ export function formulario({ titulo, ayuda = "", campos, ok = "Guardar" }) {
         ${ayuda ? `<p class="ayuda">${esc(ayuda)}</p>` : ""}
         ${campos.map((c) => `
           <label>${esc(c.etiqueta)}
-            <input name="${esc(c.nombre)}" type="${esc(c.tipo || "text")}" value="${esc(c.valor ?? "")}"
-              placeholder="${esc(c.placeholder || "")}" ${c.requerido ? "required" : ""}
-              ${c.autocomplete ? `autocomplete="${esc(c.autocomplete)}"` : ""} ${c.foco ? "data-foco" : ""}>
+            ${c.tipo === "select"
+              ? `<select name="${esc(c.nombre)}">${c.opciones.map((o) =>
+                  `<option value="${esc(o.valor)}"${String(o.valor) === String(c.valor ?? "") ? " selected" : ""}>${esc(o.texto)}</option>`).join("")}</select>`
+              : `<input name="${esc(c.nombre)}" type="${esc(c.tipo || "text")}" value="${esc(c.valor ?? "")}"
+                  placeholder="${esc(c.placeholder || "")}" ${c.requerido ? "required" : ""} ${c.min !== undefined ? `min="${esc(c.min)}"` : ""}
+                  ${c.autocomplete ? `autocomplete="${esc(c.autocomplete)}"` : ""} ${c.foco ? "data-foco" : ""}>`}
           </label>`).join("")}
         <div class="acciones">
           <button type="button" class="sec" data-cancelar>Cancelar</button>

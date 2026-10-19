@@ -34,3 +34,20 @@ export function escudo(equipo, tamano = 24) {
   }
   return `<span class="escudo escudo--ini" style="width:${tamano}px;height:${tamano}px;font-size:${Math.round(tamano * 0.4)}px">${esc(iniciales(equipo?.nombre))}</span>`;
 }
+
+// Para buscar sin importar mayúsculas ni tildes
+export const normalizar = (texto) =>
+  String(texto ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+
+const DIAS_LARGOS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+const MESES_LARGOS = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+
+// "2026-10-07" → "miércoles 7 de octubre"
+export function formatoFechaLarga(iso) {
+  if (!iso) return "";
+  const [anio, mes, dia] = iso.split("-").map(Number);
+  return `${DIAS_LARGOS[new Date(anio, mes - 1, dia).getDay()]} ${dia} de ${MESES_LARGOS[mes - 1]}`;
+}
+
+// "2026-10-17" → "17/10"
+export const fechaCorta = (iso) => (iso ? `${Number(iso.slice(8, 10))}/${Number(iso.slice(5, 7))}` : "");

@@ -1,0 +1,836 @@
+{
+ "partidos": [
+  {
+   "id": "P1",
+   "codigo": "P1",
+   "ronda": "Ronda previa",
+   "llave": "Llave 19",
+   "fecha": "2026-10-07",
+   "hora": "20:00:00",
+   "cancha": "Rugby",
+   "local_id": "la-maquina",
+   "visitante_id": "tercer-tiempo",
+   "origen_local": null,
+   "origen_visitante": null,
+   "goles_local": 2,
+   "goles_visitante": 0,
+   "penales_ganador": null,
+   "estado": "jugado"
+  },
+  {
+   "id": "P2",
+   "codigo": "P2",
+   "ronda": "Ronda previa",
+   "llave": "Llave 19",
+   "fecha": "2026-10-07",
+   "hora": "21:10:00",
+   "cancha": "Rugby",
+   "local_id": "gol-en-contra",
+   "visitante_id": "minaster-city",
+   "origen_local": null,
+   "origen_visitante": null,
+   "goles_local": 0,
+   "goles_visitante": 3,
+   "penales_ganador": null,
+   "estado": "jugado"
+  },
+  {
+   "id": "P3",
+   "codigo": "P3",
+   "ronda": "Ronda previa",
+   "llave": "Llave 19",
+   "fecha": "2026-10-07",
+   "hora": "21:10:00",
+   "cancha": "Fútbol",
+   "local_id": "maverick",
+   "visitante_id": "de-zurda",
+   "origen_local": null,
+   "origen_visitante": null,
+   "goles_local": 1,
+   "goles_visitante": 0,
+   "penales_ganador": null,
+   "estado": "jugado"
+  },
+  {
+   "id": "P4",
+   "codigo": "P4",
+   "ronda": "Ronda previa",
+   "llave": "Llave 18",
+   "fecha": "2026-10-07",
+   "hora": "22:20:00",
+   "cancha": "Rugby",
+   "local_id": "antorcha",
+   "visitante_id": "timba",
+   "origen_local": null,
+   "origen_visitante": null,
+   "goles_local": 0,
+   "goles_visitante": 1,
+   "penales_ganador": null,
+   "estado": "jugado"
+  },
+  {
+   "id": "P5",
+   "codigo": "P5",
+   "ronda": "Ronda previa",
+   "llave": "Llave 18",
+   "fecha": "2026-10-07",
+   "hora": "22:20:00",
+   "cancha": "Fútbol",
+   "local_id": "c-lesion",
+   "visitante_id": "malvinas",
+   "origen_local": null,
+   "origen_visitante": null,
+   "goles_local": 3,
+   "goles_visitante": 0,
+   "penales_ganador": null,
+   "estado": "jugado"
+  },
+  {
+   "id": "P6",
+   "codigo": "P6",
+   "ronda": "16avos de final",
+   "llave": "Llave 18",
+   "fecha": "2026-10-17",
+   "hora": "09:00:00",
+   "cancha": "Rugby",
+   "local_id": "calise",
+   "visitante_id": "inter",
+   "origen_local": null,
+   "origen_visitante": null,
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P7",
+   "codigo": "P7",
+   "ronda": "16avos de final",
+   "llave": "Llave 18",
+   "fecha": "2026-10-17",
+   "hora": "09:00:00",
+   "cancha": "Fútbol",
+   "local_id": "atletico-bonus-track",
+   "visitante_id": "c-lesion",
+   "origen_local": null,
+   "origen_visitante": {
+    "ganador": "P5"
+   },
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P8",
+   "codigo": "P8",
+   "ronda": "16avos de final",
+   "llave": "Llave 18",
+   "fecha": "2026-10-17",
+   "hora": "10:10:00",
+   "cancha": "Rugby",
+   "local_id": "aston",
+   "visitante_id": "imputables",
+   "origen_local": null,
+   "origen_visitante": null,
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P9",
+   "codigo": "P9",
+   "ronda": "16avos de final",
+   "llave": "Llave 18",
+   "fecha": "2026-10-17",
+   "hora": "10:10:00",
+   "cancha": "Fútbol",
+   "local_id": "dep-la-verna",
+   "visitante_id": "eclipse",
+   "origen_local": null,
+   "origen_visitante": null,
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P10",
+   "codigo": "P10",
+   "ronda": "16avos de final",
+   "llave": "Llave 18",
+   "fecha": "2026-10-17",
+   "hora": "11:20:00",
+   "cancha": "Rugby",
+   "local_id": "de-primera",
+   "visitante_id": "nacional",
+   "origen_local": null,
+   "origen_visitante": null,
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P11",
+   "codigo": "P11",
+   "ronda": "16avos de final",
+   "llave": "Llave 18",
+   "fecha": "2026-10-17",
+   "hora": "11:20:00",
+   "cancha": "Fútbol",
+   "local_id": "necaxa",
+   "visitante_id": "constructores",
+   "origen_local": null,
+   "origen_visitante": null,
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P12",
+   "codigo": "P12",
+   "ronda": "16avos de final",
+   "llave": "Llave 18",
+   "fecha": "2026-10-17",
+   "hora": "12:30:00",
+   "cancha": "Rugby",
+   "local_id": "timba",
+   "visitante_id": "defensa-e-injusticia",
+   "origen_local": {
+    "ganador": "P4"
+   },
+   "origen_visitante": null,
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P13",
+   "codigo": "P13",
+   "ronda": "16avos de final",
+   "llave": "Llave 18",
+   "fecha": "2026-10-17",
+   "hora": "12:30:00",
+   "cancha": "Fútbol",
+   "local_id": "celtic",
+   "visitante_id": "catedra",
+   "origen_local": null,
+   "origen_visitante": null,
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P14",
+   "codigo": "P14",
+   "ronda": "16avos de final",
+   "llave": "Llave 19",
+   "fecha": "2026-10-17",
+   "hora": "13:40:00",
+   "cancha": "Rugby",
+   "local_id": "otro-equipo",
+   "visitante_id": "al-costado",
+   "origen_local": null,
+   "origen_visitante": null,
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P15",
+   "codigo": "P15",
+   "ronda": "16avos de final",
+   "llave": "Llave 19",
+   "fecha": "2026-10-17",
+   "hora": "13:40:00",
+   "cancha": "Fútbol",
+   "local_id": "don-bosco",
+   "visitante_id": "maverick",
+   "origen_local": null,
+   "origen_visitante": {
+    "ganador": "P3"
+   },
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P16",
+   "codigo": "P16",
+   "ronda": "16avos de final",
+   "llave": "Llave 19",
+   "fecha": "2026-10-17",
+   "hora": "14:50:00",
+   "cancha": "Rugby",
+   "local_id": "f90",
+   "visitante_id": "red-bull",
+   "origen_local": null,
+   "origen_visitante": null,
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P17",
+   "codigo": "P17",
+   "ronda": "16avos de final",
+   "llave": "Llave 19",
+   "fecha": "2026-10-17",
+   "hora": "14:50:00",
+   "cancha": "Fútbol",
+   "local_id": "newcauce",
+   "visitante_id": "geologia",
+   "origen_local": null,
+   "origen_visitante": null,
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P18",
+   "codigo": "P18",
+   "ronda": "16avos de final",
+   "llave": "Llave 19",
+   "fecha": "2026-10-17",
+   "hora": "16:00:00",
+   "cancha": "Rugby",
+   "local_id": "flandria",
+   "visitante_id": "nottingham",
+   "origen_local": null,
+   "origen_visitante": null,
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P19",
+   "codigo": "P19",
+   "ronda": "16avos de final",
+   "llave": "Llave 19",
+   "fecha": "2026-10-17",
+   "hora": "16:00:00",
+   "cancha": "Fútbol",
+   "local_id": "vial-fc",
+   "visitante_id": "minaster-city",
+   "origen_local": null,
+   "origen_visitante": {
+    "ganador": "P2"
+   },
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P20",
+   "codigo": "P20",
+   "ronda": "16avos de final",
+   "llave": "Llave 19",
+   "fecha": "2026-10-17",
+   "hora": "17:10:00",
+   "cancha": "Rugby",
+   "local_id": "la-maquina",
+   "visitante_id": "talleres",
+   "origen_local": {
+    "ganador": "P1"
+   },
+   "origen_visitante": null,
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P21",
+   "codigo": "P21",
+   "ronda": "16avos de final",
+   "llave": "Llave 19",
+   "fecha": "2026-10-17",
+   "hora": "17:10:00",
+   "cancha": "Fútbol",
+   "local_id": "jagermeister",
+   "visitante_id": "central",
+   "origen_local": null,
+   "origen_visitante": null,
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P22",
+   "codigo": "P22",
+   "ronda": "Octavos de final",
+   "llave": "Llave 19",
+   "fecha": "2026-10-21",
+   "hora": "21:00:00",
+   "cancha": "Rugby",
+   "local_id": null,
+   "visitante_id": null,
+   "origen_local": {
+    "ganador": "P16"
+   },
+   "origen_visitante": {
+    "ganador": "P17"
+   },
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P23",
+   "codigo": "P23",
+   "ronda": "Octavos de final",
+   "llave": "Llave 19",
+   "fecha": "2026-10-21",
+   "hora": "21:00:00",
+   "cancha": "Fútbol",
+   "local_id": null,
+   "visitante_id": null,
+   "origen_local": {
+    "ganador": "P14"
+   },
+   "origen_visitante": {
+    "ganador": "P15"
+   },
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P24",
+   "codigo": "P24",
+   "ronda": "Octavos de final",
+   "llave": "Llave 19",
+   "fecha": "2026-10-21",
+   "hora": "22:10:00",
+   "cancha": "Rugby",
+   "local_id": null,
+   "visitante_id": null,
+   "origen_local": {
+    "ganador": "P18"
+   },
+   "origen_visitante": {
+    "ganador": "P19"
+   },
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P25",
+   "codigo": "P25",
+   "ronda": "Octavos de final",
+   "llave": "Llave 19",
+   "fecha": "2026-10-21",
+   "hora": "22:10:00",
+   "cancha": "Fútbol",
+   "local_id": null,
+   "visitante_id": null,
+   "origen_local": {
+    "ganador": "P20"
+   },
+   "origen_visitante": {
+    "ganador": "P21"
+   },
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P26",
+   "codigo": "P26",
+   "ronda": "Octavos de final",
+   "llave": "Llave 18",
+   "fecha": "2026-10-28",
+   "hora": "21:00:00",
+   "cancha": "Rugby",
+   "local_id": null,
+   "visitante_id": null,
+   "origen_local": {
+    "ganador": "P8"
+   },
+   "origen_visitante": {
+    "ganador": "P9"
+   },
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P27",
+   "codigo": "P27",
+   "ronda": "Octavos de final",
+   "llave": "Llave 18",
+   "fecha": "2026-10-28",
+   "hora": "21:00:00",
+   "cancha": "Fútbol",
+   "local_id": null,
+   "visitante_id": null,
+   "origen_local": {
+    "ganador": "P6"
+   },
+   "origen_visitante": {
+    "ganador": "P7"
+   },
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P28",
+   "codigo": "P28",
+   "ronda": "Octavos de final",
+   "llave": "Llave 18",
+   "fecha": "2026-10-28",
+   "hora": "22:10:00",
+   "cancha": "Rugby",
+   "local_id": null,
+   "visitante_id": null,
+   "origen_local": {
+    "ganador": "P10"
+   },
+   "origen_visitante": {
+    "ganador": "P11"
+   },
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P29",
+   "codigo": "P29",
+   "ronda": "Octavos de final",
+   "llave": "Llave 18",
+   "fecha": "2026-10-28",
+   "hora": "22:10:00",
+   "cancha": "Fútbol",
+   "local_id": null,
+   "visitante_id": null,
+   "origen_local": {
+    "ganador": "P12"
+   },
+   "origen_visitante": {
+    "ganador": "P13"
+   },
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P30",
+   "codigo": "P30",
+   "ronda": "Cuartos de final",
+   "llave": "Llave 19",
+   "fecha": "2026-11-04",
+   "hora": "21:00:00",
+   "cancha": "Fútbol",
+   "local_id": null,
+   "visitante_id": null,
+   "origen_local": {
+    "ganador": "P25"
+   },
+   "origen_visitante": {
+    "ganador": "P24"
+   },
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P31",
+   "codigo": "P31",
+   "ronda": "Cuartos de final",
+   "llave": "Llave 18",
+   "fecha": "2026-11-04",
+   "hora": "21:00:00",
+   "cancha": "Rugby",
+   "local_id": null,
+   "visitante_id": null,
+   "origen_local": {
+    "ganador": "P29"
+   },
+   "origen_visitante": {
+    "ganador": "P28"
+   },
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P32",
+   "codigo": "P32",
+   "ronda": "Cuartos de final",
+   "llave": "Llave 19",
+   "fecha": "2026-11-04",
+   "hora": "22:00:00",
+   "cancha": "Rugby",
+   "local_id": null,
+   "visitante_id": null,
+   "origen_local": {
+    "ganador": "P22"
+   },
+   "origen_visitante": {
+    "ganador": "P23"
+   },
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P33",
+   "codigo": "P33",
+   "ronda": "Cuartos de final",
+   "llave": "Llave 18",
+   "fecha": "2026-11-04",
+   "hora": "22:00:00",
+   "cancha": "Fútbol",
+   "local_id": null,
+   "visitante_id": null,
+   "origen_local": {
+    "ganador": "P26"
+   },
+   "origen_visitante": {
+    "ganador": "P27"
+   },
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P34",
+   "codigo": "P34",
+   "ronda": "Semifinal",
+   "llave": "Llave 19",
+   "fecha": null,
+   "hora": null,
+   "cancha": null,
+   "local_id": null,
+   "visitante_id": null,
+   "origen_local": {
+    "ganador": "P30"
+   },
+   "origen_visitante": {
+    "ganador": "P32"
+   },
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P35",
+   "codigo": "P35",
+   "ronda": "Semifinal",
+   "llave": "Llave 18",
+   "fecha": null,
+   "hora": null,
+   "cancha": null,
+   "local_id": null,
+   "visitante_id": null,
+   "origen_local": {
+    "ganador": "P31"
+   },
+   "origen_visitante": {
+    "ganador": "P33"
+   },
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  },
+  {
+   "id": "P36",
+   "codigo": "P36",
+   "ronda": "Final",
+   "llave": null,
+   "fecha": null,
+   "hora": null,
+   "cancha": null,
+   "local_id": null,
+   "visitante_id": null,
+   "origen_local": {
+    "ganador": "P34"
+   },
+   "origen_visitante": {
+    "ganador": "P35"
+   },
+   "goles_local": null,
+   "goles_visitante": null,
+   "penales_ganador": null,
+   "estado": "programado"
+  }
+ ],
+ "equipos": [
+  {
+   "id": "al-costado",
+   "nombre": "AL COSTADO"
+  },
+  {
+   "id": "antorcha",
+   "nombre": "ANTORCHA"
+  },
+  {
+   "id": "aston",
+   "nombre": "ASTON"
+  },
+  {
+   "id": "atletico-bonus-track",
+   "nombre": "ATLÉTICO BONUS TRACK"
+  },
+  {
+   "id": "c-lesion",
+   "nombre": "C-LESION"
+  },
+  {
+   "id": "calise",
+   "nombre": "CALISE"
+  },
+  {
+   "id": "catedra",
+   "nombre": "CÁTEDRA"
+  },
+  {
+   "id": "celtic",
+   "nombre": "CELTIC"
+  },
+  {
+   "id": "central",
+   "nombre": "CENTRAL"
+  },
+  {
+   "id": "constructores",
+   "nombre": "CONSTRUCTORES"
+  },
+  {
+   "id": "de-primera",
+   "nombre": "DE PRIMERA"
+  },
+  {
+   "id": "de-zurda",
+   "nombre": "DE ZURDA"
+  },
+  {
+   "id": "defensa-e-injusticia",
+   "nombre": "DEFENSA E INJUSTICIA"
+  },
+  {
+   "id": "dep-la-verna",
+   "nombre": "DEP. LA VERNA"
+  },
+  {
+   "id": "don-bosco",
+   "nombre": "DON BOSCO"
+  },
+  {
+   "id": "eclipse",
+   "nombre": "ECLIPSE"
+  },
+  {
+   "id": "f90",
+   "nombre": "F90"
+  },
+  {
+   "id": "flandria",
+   "nombre": "FLANDRIA"
+  },
+  {
+   "id": "geologia",
+   "nombre": "GEOLOGIA"
+  },
+  {
+   "id": "gol-en-contra",
+   "nombre": "GOL EN CONTRA"
+  },
+  {
+   "id": "imputables",
+   "nombre": "IMPUTABLES"
+  },
+  {
+   "id": "inter",
+   "nombre": "INTER"
+  },
+  {
+   "id": "jagermeister",
+   "nombre": "JAGERMEISTER"
+  },
+  {
+   "id": "la-maquina",
+   "nombre": "LA MAQUINA"
+  },
+  {
+   "id": "malvinas",
+   "nombre": "MALVINAS"
+  },
+  {
+   "id": "maverick",
+   "nombre": "MAVERICK"
+  },
+  {
+   "id": "minaster-city",
+   "nombre": "MINASTER CITY"
+  },
+  {
+   "id": "nacional",
+   "nombre": "NACIONAL"
+  },
+  {
+   "id": "necaxa",
+   "nombre": "NECAXA"
+  },
+  {
+   "id": "newcauce",
+   "nombre": "NEWCAUCE"
+  },
+  {
+   "id": "nottingham",
+   "nombre": "NOTTINGHAM"
+  },
+  {
+   "id": "otro-equipo",
+   "nombre": "OTRO EQUIPO"
+  },
+  {
+   "id": "red-bull",
+   "nombre": "RED BULL"
+  },
+  {
+   "id": "talleres",
+   "nombre": "TALLERES"
+  },
+  {
+   "id": "tercer-tiempo",
+   "nombre": "TERCER TIEMPO"
+  },
+  {
+   "id": "timba",
+   "nombre": "TIMBA"
+  },
+  {
+   "id": "vial-fc",
+   "nombre": "VIAL FC"
+  }
+ ]
+}
