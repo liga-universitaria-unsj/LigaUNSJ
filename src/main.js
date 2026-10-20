@@ -4,18 +4,19 @@
 // =====================================================================
 import "./styles/estilos.css";
 import { db, configuracionCompleta } from "./supabase.js";
-import { cargarBase, cargarDivision, cargarCopas, cargarChallenger } from "./datos.js";
+import { cargarBase, cargarDivision, cargarCopas, cargarChallenger, cargarEstadisticas, cargarSanciones, cargarJugadores } from "./datos.js";
 import { sesion, iniciarAuth, ingresar, salir } from "./auth.js";
 import * as admin from "./admin.js";
-import { formulario } from "./modal.js";
+import { formulario, formularioJugador } from "./modal.js";
 import { LIGA, FORMATOS } from "./liga.js";
-import { esc, nombreTemporada, formatoHora, entero } from "./util.js";
+import { esc, nombreTemporada, formatoHora, entero, normalizar } from "./util.js";
 import { resolverLlaves, layoutBracket, caminoDe } from "./llaves.js";
 import { htmlMenu, htmlTabs, htmlInicio } from "./vistas/layout.js";
 import { htmlPosiciones } from "./vistas/posiciones.js";
 import { htmlFixture } from "./vistas/fixture.js";
 import { prepararCopas, htmlCopas } from "./vistas/copas.js";
 import { htmlChallenger, htmlCamino, buscarEquipos } from "./vistas/challenger.js";
+import { htmlGoleadores, htmlTarjetas, htmlSuspensiones } from "./vistas/estadisticas.js";
 
 const $ = (selector) => document.querySelector(selector);
 const guardarPref = (clave, valor) => { try { localStorage.setItem(clave, valor); } catch (e) { /* sin almacenamiento */ } };
@@ -29,6 +30,9 @@ let datosActuales = null;               // partidos que se están mostrando (par
 let resueltosActuales = new Map();      // id de partido → partido con sus equipos resueltos (llaves)
 let challengerActual = null;            // datos de la Challenger para el buscador
 let busquedaChallenger = "";            // lo que se escribió en el buscador (se conserva al actualizar)
+let filtroJugadores = "";               // buscador de goleadores / tarjetas / suspensiones
+let filtroTarjetas = "todas";           // "todas" | "amarilla" | "roja"
+let vistaActual = null;                 // división, equipos y datos de la pestaña de estadísticas que se está mostrando
 let contadorPedidos = 0;                // descarta respuestas viejas si el usuario navega rápido
 const cache = new Map();                // clave → datos ya pedidos
 const zooms = new Map();                // zoom elegido por cuadro de llaves
@@ -92,11 +96,13 @@ function actualizarPie() {
 // #/                       → inicio
 // #/division/A             → posiciones y fixture
 // #/division/A/copas       → copa de oro y de plata
+// #/division/A/goleadores  → también /tarjetas y /suspensiones
 // #/challenger             → Copa Challenger
 function leerRuta() {
   const partes = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
   if (partes[0] === "division" && partes[1]) {
-    return { vista: "division", codigo: decodeURIComponent(partes[1]).toUpperCase(), tab: partes[2] === "copas" ? "copas" : "posiciones" };
+    const tab = ["copas", "goleadores", "tarjetas", "suspensiones"].includes(partes[2]) ? partes[2] : "posiciones";
+    return { vista: "division", codigo: decodeURIComponent(partes[1]).toUpperCase(), tab };
   }
   if (partes[0] === "challenger") return { vista: "challenger" };
   return { vista: "inicio" };
@@ -172,6 +178,22 @@ async function pintarDivision(ruta, temporada, pedido, mostrarCargando) {
     contenido.innerHTML = cabecera + htmlTabs({ codigo: division.codigo, activa: "copas" })
       + htmlCopas({ division, formato, copas: preparadas, admin: sesion.admin });
     ajustarBrackets();
+    return;
+  }
+
+  if (["goleadores", "tarjetas", "suspensiones"].includes(ruta.tab)) {
+    const tabla = ruta.tab === "suspensiones"
+      ? await obtener(`sanciones:${division.id}:${sesion.admin ? "admin" : "publico"}`, () => cargarSanciones(division.id), mostrarCargando)
+      : await obtener(`stats:${clave}`, () => cargarEstadisticas(temporadaId, division.id), mostrarCargando);
+    if (pedido !== contadorPedidos) return;
+    datosActuales = { partidos: [] };
+    vistaActual = { division, equipos: datos.equipos, filas: tabla };
+    const admin_ = sesion.admin;
+    const cuerpo = ruta.tab === "goleadores" ? htmlGoleadores({ stats: tabla, admin: admin_, filtro: filtroJugadores })
+      : ruta.tab === "tarjetas" ? htmlTarjetas({ stats: tabla, admin: admin_, filtro: filtroJugadores, tipo: filtroTarjetas })
+      : htmlSuspensiones({ sanciones: tabla, admin: admin_, filtro: filtroJugadores });
+    contenido.innerHTML = cabecera + htmlTabs({ codigo: division.codigo, activa: ruta.tab }) + cuerpo;
+    aplicarFiltroJugadores();
     return;
   }
 
@@ -379,6 +401,105 @@ async function editarPartidoLlave(id) {
 }
 
 
+// ---------- Goleadores, tarjetas y suspensiones ----------
+// Muestra solo las filas que coinciden con lo escrito en el buscador (sin importar tildes ni mayúsculas)
+function aplicarFiltroJugadores() {
+  const texto = normalizar(filtroJugadores);
+  document.querySelectorAll("tr[data-buscar]").forEach((fila) => {
+    fila.hidden = Boolean(texto) && !fila.dataset.buscar.includes(texto);
+  });
+}
+
+const numeroOVacio = (valor) => (String(valor ?? "").trim() === "" ? null : entero(valor));
+const mismoNombre = (v, j) => v.apellido.toUpperCase() === j.apellido && v.nombre.toUpperCase() === j.nombre;
+
+// Carga o corrige el TOTAL de goles (modo "goles") o de tarjetas (modo "tarjetas") de un jugador
+async function formularioEstadistica(modo, jugadorId = null) {
+  if (!vistaActual) return;
+  const { division, equipos } = vistaActual;
+  const fila = jugadorId ? vistaActual.filas.find((x) => x.jugador_id === jugadorId) : null;
+
+  let jugadores;
+  try { jugadores = await cargarJugadores(equipos.map((e) => e.id)); }
+  catch (e) { console.error(e); avisar("No se pudo cargar la lista de jugadores."); return; }
+
+  const campos = modo === "goles"
+    ? [{ nombre: "goles", etiqueta: "Total de goles en el torneo", tipo: "number", min: 0, valor: fila?.goles ?? "" }]
+    : [{ nombre: "amarillas", etiqueta: "Total de tarjetas amarillas", tipo: "number", min: 0, valor: fila?.amarillas ?? "" },
+       { nombre: "rojas", etiqueta: "Total de tarjetas rojas", tipo: "number", min: 0, valor: fila?.rojas ?? "" }];
+
+  const v = await formularioJugador({
+    titulo: fila ? "Corregir totales" : modo === "goles" ? "Cargar goles" : "Cargar tarjetas",
+    ayuda: "Ingresá el TOTAL del jugador en este torneo (no los de una sola fecha). Con 0 se quita de la tabla.",
+    equipos, jugadores, campos,
+    equipoId: fila?.equipo_id ?? "", apellido: fila?.jugadores.apellido ?? "", nombre: fila?.jugadores.nombre ?? "",
+    bloquearEquipo: Boolean(fila), edicion: Boolean(fila),
+  });
+  if (!v) return;
+
+  await guardarCambios(async () => {
+    const goles = modo === "goles" ? numeroOVacio(v.goles) : null;
+    const amarillas = modo === "tarjetas" ? numeroOVacio(v.amarillas) : null;
+    const rojas = modo === "tarjetas" ? numeroOVacio(v.rojas) : null;
+    if (modo === "goles" && goles === null) throw new Error("Ingresá el total de goles.");
+    if (modo === "tarjetas" && amarillas === null && rojas === null) throw new Error("Ingresá las amarillas, las rojas o ambas.");
+
+    if (fila && !mismoNombre(v, fila.jugadores)) await admin.corregirJugador(fila.jugador_id, v.apellido, v.nombre);
+    await admin.cargarEstadistica({
+      temporadaId, divisionId: division.id, equipoId: v.equipo_id ?? fila.equipo_id,
+      apellido: v.apellido, nombre: v.nombre, goles, amarillas, rojas,
+    });
+  });
+}
+
+// Alta o edición de una suspensión
+async function formularioSancion(id = null) {
+  if (!vistaActual) return;
+  const { division, equipos } = vistaActual;
+  const s = id ? vistaActual.filas.find((x) => x.id === id) : null;
+
+  let jugadores;
+  try { jugadores = await cargarJugadores(equipos.map((e) => e.id)); }
+  catch (e) { console.error(e); avisar("No se pudo cargar la lista de jugadores."); return; }
+
+  const v = await formularioJugador({
+    titulo: s ? "Editar suspensión" : "Cargar suspensión",
+    ayuda: "La causa se publica tal como la escribas. Si es una suspensión hasta una fecha, se oculta sola al vencer.",
+    equipos, jugadores, permitirSinEquipo: true, edicion: Boolean(s),
+    equipoId: s?.equipo_id ?? "", apellido: s?.jugadores.apellido ?? "", nombre: s?.jugadores.nombre ?? "",
+    campos: [
+      { nombre: "causa", etiqueta: "Causa / sanción (como se publica)", requerido: true, valor: s?.causa ?? "", placeholder: "Ej.: Hasta el 31/12/2027 (Art. 26 inc. B)" },
+      { nombre: "articulo", etiqueta: "Artículo (opcional)", valor: s?.articulo ?? "" },
+      { nombre: "tipo", etiqueta: "Tipo de suspensión", tipo: "select", valor: s?.tipo ?? "partidos",
+        opciones: [{ valor: "partidos", texto: "Por cantidad de partidos" }, { valor: "hasta_fecha", texto: "Hasta una fecha" }, { valor: "de_por_vida", texto: "De por vida" }] },
+      { nombre: "partidos_total", etiqueta: "Partidos de suspensión (si es por partidos)", tipo: "number", min: 0, valor: s?.partidos_total ?? "" },
+      { nombre: "partidos_cumplidos", etiqueta: "Partidos ya cumplidos", tipo: "number", min: 0, valor: s?.partidos_cumplidos ?? 0 },
+      { nombre: "hasta", etiqueta: "Vence el (si es hasta una fecha)", tipo: "date", valor: s?.hasta ?? "" },
+    ],
+  });
+  if (!v) return;
+
+  await guardarCambios(async () => {
+    if (v.tipo === "partidos" && !numeroOVacio(v.partidos_total)) throw new Error("Indicá cuántos partidos de suspensión son.");
+    if (v.tipo === "hasta_fecha" && !v.hasta) throw new Error("Indicá hasta qué fecha dura la suspensión.");
+
+    let jugadorId = s?.jugador_id;
+    if (s && !mismoNombre(v, s.jugadores)) await admin.corregirJugador(s.jugador_id, v.apellido, v.nombre);
+    if (!s) jugadorId = await admin.asegurarJugador(v.equipo_id, v.apellido, v.nombre);
+
+    const datos = {
+      jugador_id: jugadorId, division_id: division.id, equipo_id: v.equipo_id,
+      causa: v.causa.trim(), articulo: v.articulo.trim() || null, tipo: v.tipo,
+      partidos_total: v.tipo === "partidos" ? numeroOVacio(v.partidos_total) : null,
+      partidos_cumplidos: v.tipo === "partidos" ? (numeroOVacio(v.partidos_cumplidos) ?? 0) : 0,
+      hasta: v.tipo === "hasta_fecha" ? v.hasta : null,
+    };
+    if (s) await admin.actualizarSancion(s.id, datos);
+    else await admin.crearSancion({ ...datos, activa: true });
+  });
+}
+
+
 // ---------- Botones y eventos ----------
 function enlazarEventos() {
   // Menú lateral
@@ -423,6 +544,10 @@ function enlazarEventos() {
     const zoom = e.target.closest("[data-zoom]");
     if (zoom) { cambiarZoom(zoom.closest(".bracket-bloque"), zoom.dataset.zoom); return; }
 
+    // Filtro de tarjetas (todas / amarillas / rojas)
+    const chip = e.target.closest("[data-filtro-tarjeta]");
+    if (chip) { filtroTarjetas = chip.dataset.filtroTarjeta; renderContenido({ mostrarCargando: false }); return; }
+
     // Buscador de la Challenger: elegir uno de varios equipos
     const elegido = e.target.closest("[data-elegir-equipo]");
     if (elegido) {
@@ -438,10 +563,24 @@ function enlazarEventos() {
     if (boton.dataset.accion === "reprogramar") reprogramarUno(boton.dataset.id);
     if (boton.dataset.accion === "reprogramar-fecha") reprogramarFecha(Number(boton.dataset.fecha));
     if (boton.dataset.accion === "editar-llave") editarPartidoLlave(boton.dataset.id);
+    if (boton.dataset.accion === "cargar-goles") formularioEstadistica("goles");
+    if (boton.dataset.accion === "editar-goles") formularioEstadistica("goles", boton.dataset.jugador);
+    if (boton.dataset.accion === "cargar-tarjetas") formularioEstadistica("tarjetas");
+    if (boton.dataset.accion === "editar-tarjetas") formularioEstadistica("tarjetas", boton.dataset.jugador);
+    if (boton.dataset.accion === "cargar-sancion") formularioSancion();
+    if (boton.dataset.accion === "editar-sancion") formularioSancion(boton.dataset.id);
+    if (boton.dataset.accion === "toggle-sancion") {
+      const s = vistaActual?.filas.find((x) => x.id === boton.dataset.id);
+      if (s) guardarCambios(() => admin.actualizarSancion(s.id, { activa: !s.activa }));
+    }
+    if (boton.dataset.accion === "borrar-sancion" && confirm("¿Borrar esta suspensión?")) {
+      guardarCambios(() => admin.borrarSancion(boton.dataset.id));
+    }
   });
 
   // Buscador de equipo de la Challenger
   document.addEventListener("input", (e) => {
+    if (e.target.id === "filtro-jugadores") { filtroJugadores = e.target.value; aplicarFiltroJugadores(); return; }
     if (e.target.id !== "buscar-equipo") return;
     busquedaChallenger = e.target.value;
     aplicarBusqueda();
