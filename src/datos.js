@@ -28,3 +28,25 @@ export async function cargarDivision(temporadaId, divisionId) {
     descuentos: o(descuentos),
   };
 }
+
+// Partidos de la Copa de Oro y de Plata de una división
+export async function cargarCopas(temporadaId, divisionId) {
+  return o(await db.from("partidos").select("*")
+    .eq("temporada_id", temporadaId).eq("division_id", divisionId).in("fase", ["oro", "plata"]));
+}
+
+// Copa Challenger (el torneo más reciente), con todos los equipos y la división de cada uno
+export async function cargarChallenger(temporadaId) {
+  const torneos = o(await db.from("torneos_especiales").select("*")
+    .ilike("nombre", "%challenger%").order("anio", { ascending: false }).limit(1));
+  if (!torneos.length) return null;
+
+  const [partidos, equipos, inscripciones] = await Promise.all([
+    db.from("partidos").select("*").eq("torneo_especial_id", torneos[0].id),
+    db.from("equipos").select("id, nombre, slug, escudo_url"),
+    temporadaId
+      ? db.from("inscripciones").select("equipo_id, division_id").eq("temporada_id", temporadaId)
+      : Promise.resolve({ data: [], error: null }),
+  ]);
+  return { torneo: torneos[0], partidos: o(partidos), equipos: o(equipos), inscripciones: o(inscripciones) };
+}

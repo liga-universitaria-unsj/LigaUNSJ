@@ -19,3 +19,17 @@ export async function reprogramar(ids, fecha, hora, motivo) {
 export async function actualizarCancha(id, cancha) {
   return ok(await db.from("partidos").update({ cancha }).eq("id", id));
 }
+
+// Resultado de un partido de llave: si empataron, "penales" dice quién ganó ("local" o "visitante").
+// goles null/null = borrar el resultado
+export async function guardarResultadoLlave(id, golesLocal, golesVisitante, penales) {
+  const cambios = golesLocal === null
+    ? { goles_local: null, goles_visitante: null, penales_ganador: null, estado: "programado" }
+    : {
+        goles_local: golesLocal,
+        goles_visitante: golesVisitante,
+        penales_ganador: golesLocal === golesVisitante ? (penales || null) : null,
+        estado: "jugado",
+      };
+  return ok(await db.from("partidos").update(cambios).eq("id", id));
+}

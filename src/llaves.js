@@ -83,7 +83,7 @@ export function resolverLlaves(partidos, { equipos = new Map(), posiciones = {},
 const media = (numeros) => numeros.reduce((a, b) => a + b, 0) / numeros.length;
 
 export function layoutBracket(resueltos, opciones = {}) {
-  const { anchoCard = 176, hueco = 30, filaH = 94, altoCard = 78, cabecera = 44, margen = 8 } = opciones;
+  const { anchoCard = 200, hueco = 28, filaH = 94, altoCard = 78, cabecera = 44, margen = 8 } = opciones;
   const colW = anchoCard + hueco;
 
   const porCodigo = new Map(resueltos.map((p) => [p.codigo, p]));
