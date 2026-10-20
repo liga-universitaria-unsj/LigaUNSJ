@@ -328,3 +328,45 @@ dialog.modal button.sec { color: var(--texto); }
   .fila-chal { grid-template-columns: 44px 1fr auto; }
   .fc-cancha { display: none; }
 }
+
+
+/* =====================================================================
+   FASE 3 · GOLEADORES, TARJETAS Y SUSPENSIONES
+   ===================================================================== */
+
+.estadisticas { max-width: 900px; }
+.stats-barra { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+.stats-barra input[type="search"] {
+  flex: 1; min-width: 200px; padding: 9px 12px; border: 2px solid var(--primario); border-radius: 8px;
+  background: var(--superficie); color: var(--texto); font-size: 16px;
+}
+.chips-filtro { display: flex; gap: 6px; }
+.chip { background: var(--borde); color: var(--texto); border-radius: 20px; padding: 6px 14px; font-weight: 600; }
+.chip.activo { background: var(--primario); color: #fff; }
+:root[data-tema="oscuro"] .chip.activo { color: #0b111f; }
+
+.tabla tr[hidden] { display: none; }
+.tabla td.acc { white-space: nowrap; text-align: right; }
+.tabla td.acc .mini { margin-left: 3px; }
+.tabla td.causa { max-width: 420px; }
+.tabla td.causa small { color: var(--suave); }
+.tabla tr.vencida td { opacity: .5; }
+.tag-vencida { font-weight: 700; color: #c23a56 !important; }
+
+/* Tarjeta amarilla / roja */
+.tj { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
+.tj i { display: inline-block; width: 11px; height: 15px; border-radius: 2px; }
+.tj--amarilla i { background: #f5c518; }
+.tj--roja i { background: #d92d3a; }
+
+/* Ayudas dentro de los formularios */
+.hint { min-height: 18px; margin: -4px 0 10px; font-size: 13px; color: var(--suave); }
+.hint.ok { color: #10b981; font-weight: 600; }
+.hint.nuevo { color: var(--acento); font-weight: 600; }
+.hint.aviso { color: #c23a56; }
+.error-form { background: #c23a561f; color: #c23a56; border-radius: 8px; padding: 8px 10px; font-size: 14px; margin: 0 0 8px; }
+.error-form[hidden] { display: none; }
+dialog.modal select {
+  display: block; width: 100%; margin-top: 4px; padding: 8px; border: 2px solid var(--primario); border-radius: 8px;
+  background: var(--superficie); color: var(--texto); font-size: 16px;
+}
