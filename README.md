@@ -10,7 +10,8 @@ resultados, días y horarios (y postergaciones con su motivo).
 | `npm install` | Descarga las dependencias (solo la primera vez) |
 | `npm run dev` | Abre la versión de desarrollo; se actualiza sola al guardar |
 | `npm run build` | Genera la carpeta `dist` lista para publicar |
-| `node pruebas/probar.mjs` | Prueba la lógica de tablas y vistas (no necesita internet) |
+| `node pruebas/probar.mjs` | Prueba la lógica de tablas, llaves, goleadores, tarjetas y suspensiones (no necesita internet) |
+| `node pruebas/revisar-imports.mjs` | Revisa que ningún archivo pida algo que no existe (evita la pantalla en blanco al copiar archivos) |
 
 ## Configuración
 
@@ -33,9 +34,12 @@ src/
   modal.js            Cuadros de formulario
   tabla.js            Cálculo de posiciones
   util.js             Funciones chicas (fechas, escudos, escape de HTML)
-  vistas/             Pantallas: menú, posiciones, fixture
+  llaves.js           Motor de llaves: cruces, ganadores, penales, dibujo del cuadro y camino de un equipo
+  jugadores.js        Jugadores, goleadores, tarjetas y suspensiones (sin pantalla)
+  vistas/             Pantallas: menú, posiciones, fixture, copas, cuadro de llaves, Copa Challenger y estadísticas
   styles/estilos.css  Colores y diseño
-pruebas/probar.mjs    Pruebas de la lógica
+pruebas/probar.mjs    Pruebas de la lógica (incluye los 36 partidos reales de la Copa Challenger)
+pruebas/challenger.json  Datos de prueba de la Challenger
 ```
 
 ## Escudos
@@ -48,3 +52,26 @@ pruebas/probar.mjs    Pruebas de la lógica
    set escudo_url = 'https://TU-PROYECTO.supabase.co/storage/v1/object/public/escudos/' || slug || '.png'
    where slug in ('gol-en-contra', 'malvinas');   -- los que ya subiste
    ```
+
+## Cuadros de llaves
+
+Un partido de llave sabe de dónde viene cada equipo (`origen_local` / `origen_visitante` en la base):
+`{"ganador":"P16"}` = el ganador de ese partido, `{"zona":"A","lugar":1}` = el 1º de la Zona A.
+Con eso el cuadro se arma solo y avanza cuando el administrador carga un resultado
+(si hubo empate, elige quién ganó por penales).
+Sirve para la Copa de Oro, la Copa de Plata y la Copa Challenger.
+
+## Goleadores, tarjetas y suspensiones
+
+El administrador carga el **total por jugador** en el torneo (no partido por partido).
+Los jugadores se crean al cargarlos y se comparan sin tildes ni mayúsculas, así
+"Muñoz, José" y "MUNOZ, jose" son el mismo y no se duplican (la base lo garantiza,
+ver `liga/05_estadisticas.sql`). Con total 0 el jugador sale de la tabla.
+Las suspensiones las decide la liga: se cargan a mano, y las que tienen fecha de
+vencimiento se ocultan solas al público cuando vencen.
+
+## Si la página queda en blanco
+
+Casi siempre es un archivo que no se actualizó. Abrí la consola del navegador (F12) y
+corré `node pruebas/revisar-imports.mjs`: dice qué archivo tiene el problema.
+Ante la duda, reemplazá la carpeta `src` completa.

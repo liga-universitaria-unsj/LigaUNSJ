@@ -1,4 +1,10 @@
-#anotaciones personales
-ayudas
+# Dependencias y archivos generados (no se suben a GitHub)
+node_modules/
+dist/
+*.local
+
+# Claves y configuración personal
 .env
-.node_modules
+
+# Anotaciones personales
+ayudas

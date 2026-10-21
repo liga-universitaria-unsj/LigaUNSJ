@@ -472,9 +472,9 @@ async function formularioSancion(id = null) {
       { nombre: "articulo", etiqueta: "Artículo (opcional)", valor: s?.articulo ?? "" },
       { nombre: "tipo", etiqueta: "Tipo de suspensión", tipo: "select", valor: s?.tipo ?? "partidos",
         opciones: [{ valor: "partidos", texto: "Por cantidad de partidos" }, { valor: "hasta_fecha", texto: "Hasta una fecha" }, { valor: "de_por_vida", texto: "De por vida" }] },
-      { nombre: "partidos_total", etiqueta: "Partidos de suspensión (si es por partidos)", tipo: "number", min: 0, valor: s?.partidos_total ?? "" },
-      { nombre: "partidos_cumplidos", etiqueta: "Partidos ya cumplidos", tipo: "number", min: 0, valor: s?.partidos_cumplidos ?? 0 },
-      { nombre: "hasta", etiqueta: "Vence el (si es hasta una fecha)", tipo: "date", valor: s?.hasta ?? "" },
+      { nombre: "partidos_total", etiqueta: "Partidos de suspensión", tipo: "number", min: 0, valor: s?.partidos_total ?? "", visibleSi: { campo: "tipo", valores: ["partidos"] } },
+      { nombre: "partidos_cumplidos", etiqueta: "Partidos ya cumplidos", tipo: "number", min: 0, valor: s?.partidos_cumplidos ?? 0, visibleSi: { campo: "tipo", valores: ["partidos"] } },
+      { nombre: "hasta", etiqueta: "Vence el", tipo: "date", valor: s?.hasta ?? "", visibleSi: { campo: "tipo", valores: ["hasta_fecha"] } },
     ],
   });
   if (!v) return;

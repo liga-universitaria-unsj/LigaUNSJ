@@ -350,7 +350,7 @@ dialog.modal button.sec { color: var(--texto); }
 .tabla td.acc .mini { margin-left: 3px; }
 .tabla td.causa { max-width: 420px; }
 .tabla td.causa small { color: var(--suave); }
-.tabla tr.vencida td { opacity: .5; }
+.tabla tr.vencida td:not(.acc) { opacity: .5; }
 .tag-vencida { font-weight: 700; color: #c23a56 !important; }
 
 /* Tarjeta amarilla / roja */
@@ -370,3 +370,7 @@ dialog.modal select {
   display: block; width: 100%; margin-top: 4px; padding: 8px; border: 2px solid var(--primario); border-radius: 8px;
   background: var(--superficie); color: var(--texto); font-size: 16px;
 }
+
+/* Cuadros de formulario: nunca más altos que la pantalla (en celulares se desplazan) y campos con condición */
+dialog.modal { max-height: 92vh; overflow-y: auto; }
+dialog.modal label[hidden] { display: none; }

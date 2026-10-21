@@ -16,15 +16,19 @@ export function htmlMenu({ divisiones, activa, vista }) {
 }
 
 // Pestañas de cada división (las que no están listas se muestran apagadas)
+const PESTANAS = [
+  ["posiciones", "Posiciones y fixture", ""],
+  ["copas", "Copas", "/copas"],
+  ["goleadores", "Goleadores", "/goleadores"],
+  ["tarjetas", "Tarjetas", "/tarjetas"],
+  ["suspensiones", "Suspensiones", "/suspensiones"],
+];
+
 export function htmlTabs({ codigo, activa = "posiciones" }) {
-  const pronto = ["Tabla anual", "Goleadores", "Tarjetas", "Suspensiones"]
-    .map((t) => `<span class="tab deshabilitada" aria-disabled="true">${t}</span>`).join("");
   const c = esc(codigo);
-  return `<nav class="tabs">
-    <a class="tab${activa === "posiciones" ? " activa" : ""}" href="#/division/${c}">Posiciones y fixture</a>
-    <a class="tab${activa === "copas" ? " activa" : ""}" href="#/division/${c}/copas">Copas</a>
-    ${pronto}
-  </nav>`;
+  const activas = PESTANAS.map(([clave, texto, ruta]) =>
+    `<a class="tab${activa === clave ? " activa" : ""}" href="#/division/${c}${ruta}">${texto}</a>`).join("");
+  return `<nav class="tabs">${activas}<span class="tab deshabilitada" aria-disabled="true">Tabla anual</span></nav>`;
 }
 
 export function htmlInicio({ liga, divisiones, temporada }) {

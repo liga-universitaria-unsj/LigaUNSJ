@@ -50,3 +50,26 @@ export async function cargarChallenger(temporadaId) {
   ]);
   return { torneo: torneos[0], partidos: o(partidos), equipos: o(equipos), inscripciones: o(inscripciones) };
 }
+
+// ---------- Goleadores, tarjetas y suspensiones ----------
+
+// Totales por jugador en un torneo (goles, amarillas y rojas), con el jugador y el equipo
+export async function cargarEstadisticas(temporadaId, divisionId) {
+  return o(await db.from("estadisticas_jugador")
+    .select("jugador_id, equipo_id, goles, amarillas, rojas, jugadores(id, apellido, nombre), equipos(id, nombre, slug, escudo_url)")
+    .eq("temporada_id", temporadaId).eq("division_id", divisionId));
+}
+
+// Suspensiones de una división. El público solo recibe las vigentes (lo decide la base);
+// el administrador recibe todas.
+export async function cargarSanciones(divisionId) {
+  return o(await db.from("sanciones")
+    .select("id, jugador_id, equipo_id, causa, articulo, tipo, partidos_total, partidos_cumplidos, hasta, activa, creado_en, jugadores(id, apellido, nombre), equipos(id, nombre, slug, escudo_url)")
+    .eq("division_id", divisionId).order("creado_en", { ascending: false }));
+}
+
+// Jugadores ya cargados de los equipos de una división (y los que no tienen equipo), para el autocompletado
+export async function cargarJugadores(equipoIds) {
+  const ids = equipoIds.length ? `equipo_id.in.(${equipoIds.join(",")}),equipo_id.is.null` : "equipo_id.is.null";
+  return o(await db.from("jugadores").select("id, apellido, nombre, equipo_id").or(ids).order("apellido").limit(5000));
+}

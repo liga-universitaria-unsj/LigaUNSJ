@@ -9,7 +9,9 @@ import { htmlBracket } from "../src/vistas/bracket.js";
 import { htmlCopas, prepararCopas } from "../src/vistas/copas.js";
 import { htmlChallenger, htmlCamino, buscarEquipos } from "../src/vistas/challenger.js";
 import { resolverLlaves, layoutBracket, caminoDe, ladoGanador } from "../src/llaves.js";
-import { esc, formatoFecha, formatoHora, formatoFechaLarga, fechaCorta, normalizar } from "../src/util.js";
+import { esc, formatoFecha, formatoHora, formatoFechaLarga, fechaCorta, formatoFechaNumerica, normalizar } from "../src/util.js";
+import { nombreJugador, claveJugador, parsearJugador, conPosicion, ordenarGoleadores, filasTarjetas, estadoSancion } from "../src/jugadores.js";
+import { htmlGoleadores, htmlTarjetas, htmlSuspensiones } from "../src/vistas/estadisticas.js";
 
 let fallos = 0;
 const igual = (real, esperado, texto) => {
@@ -187,6 +189,66 @@ contiene(htmlMenu({ divisiones: [{ codigo: "A", nombre: "División A", color: "#
 contiene(htmlMenu({ divisiones: [], vista: "challenger" }), 'href="#/challenger"', "el menú enlaza a la Copa Challenger");
 contiene(htmlTabs({ codigo: "A", activa: "copas" }), 'href="#/division/A/copas"', "pestaña de copas");
 contiene(htmlInicio({ liga: { nombre: "Liga" }, divisiones: [], temporada: null }), "Copa Challenger", "el inicio incluye la Challenger");
+
+// =====================================================================
+//  FASE 3 · jugadores, goleadores, tarjetas y suspensiones
+// =====================================================================
+console.log("Jugadores");
+igual(parsearJugador("Pérez, Juan Carlos"), { apellido: "Pérez", nombre: "Juan Carlos" }, "separa apellido y nombre por la coma");
+igual(parsearJugador("  de la   Fuente ,  Ana  "), { apellido: "de la Fuente", nombre: "Ana" }, "limpia espacios de más (apellidos compuestos)");
+igual([parsearJugador("SoloApellido"), parsearJugador("Pérez,"), parsearJugador(",Juan")], [null, null, null], "sin coma o con un lado vacío: no es válido");
+igual(claveJugador("Muñoz", "José"), claveJugador("MUNOZ", " jose "), "'Muñoz, José' y 'MUNOZ, jose' son el mismo jugador");
+igual(claveJugador("Pérez", "Juan") === claveJugador("Perez", "Juana"), false, "nombres parecidos pero distintos no se confunden");
+igual(nombreJugador({ apellido: "PÉREZ", nombre: "JUAN" }), "PÉREZ, JUAN", "formato 'APELLIDO, NOMBRE'");
+igual(formatoFechaNumerica("2027-12-31"), "31/12/2027", "fecha dd/mm/aaaa");
+
+console.log("Goleadores y tarjetas");
+const jug = (a, n) => ({ apellido: a, nombre: n });
+const eqX = { id: "e1", nombre: "MALVINAS" }, eqY = { id: "e2", nombre: "F90" };
+const stats = [
+  { jugador_id: "1", equipo_id: "e1", goles: 7, amarillas: 1, rojas: 0, jugadores: jug("PÉREZ", "JUAN"), equipos: eqX },
+  { jugador_id: "2", equipo_id: "e2", goles: 7, amarillas: 3, rojas: 1, jugadores: jug("GÓMEZ", "LUIS"), equipos: eqY },
+  { jugador_id: "3", equipo_id: "e1", goles: 3, amarillas: 0, rojas: 2, jugadores: jug("DÍAZ", "ANA"), equipos: eqX },
+  { jugador_id: "4", equipo_id: "e2", goles: 0, amarillas: 0, rojas: 0, jugadores: jug("RUIZ", "PABLO"), equipos: eqY },
+];
+const gol = conPosicion(ordenarGoleadores(stats), (f) => f.goles);
+igual(gol.map((f) => [f.jugadores.apellido, f.goles, f.pos]), [["GÓMEZ", 7, 1], ["PÉREZ", 7, 1], ["DÍAZ", 3, 3]], "goleadores: orden, empate compartiendo puesto y el de 0 goles no aparece");
+igual(filasTarjetas(stats).map((f) => `${f.jugadores.apellido}:${f.tipo}:${f.cantidad}`),
+  ["DÍAZ:roja:2", "GÓMEZ:roja:1", "GÓMEZ:amarilla:3", "PÉREZ:amarilla:1"], "tarjetas: primero rojas, luego amarillas, de más a menos");
+igual(filasTarjetas(stats, "roja").length, 2, "filtro de rojas");
+igual(filasTarjetas(stats, "amarilla").length, 2, "filtro de amarillas");
+
+console.log("Suspensiones");
+const hoy = "2026-10-20";
+igual(estadoSancion({ activa: true, tipo: "hasta_fecha", hasta: "2027-12-31" }, hoy), { vigente: true, detalle: "Hasta el 31/12/2027" }, "hasta una fecha futura: vigente");
+igual(estadoSancion({ activa: true, tipo: "hasta_fecha", hasta: "2026-06-30" }, hoy).vigente, false, "hasta una fecha pasada: vencida");
+igual(estadoSancion({ activa: false, tipo: "de_por_vida" }, hoy), { vigente: false, detalle: "De por vida" }, "dada de baja: no vigente");
+igual(estadoSancion({ activa: true, tipo: "partidos", partidos_total: 4, partidos_cumplidos: 2 }, hoy).detalle, "Cumplió 2 de 4 partidos", "por partidos: cuántos cumplió");
+igual(estadoSancion({ activa: true, tipo: "partidos", partidos_total: 1, partidos_cumplidos: 0 }, hoy).detalle, "Cumplió 0 de 1 partido", "singular");
+
+console.log("Vistas de estadísticas");
+const hG = htmlGoleadores({ stats, admin: false });
+contiene(hG, "GÓMEZ, LUIS", "el goleador aparece con 'APELLIDO, NOMBRE'");
+igual(hG.includes("RUIZ"), false, "quien tiene 0 goles no aparece");
+igual(hG.includes("data-accion"), false, "el público no ve botones de edición");
+contiene(htmlGoleadores({ stats, admin: true }), 'data-accion="cargar-goles"', "el administrador ve '＋ Cargar goles'");
+contiene(htmlGoleadores({ stats: [], admin: false }), "Todavía no hay goleadores", "mensaje cuando no hay datos");
+contiene(htmlTarjetas({ stats, admin: false, tipo: "roja" }), 'class="chip activo" data-filtro-tarjeta="roja"', "el filtro elegido queda marcado");
+contiene(htmlTarjetas({ stats, admin: false }), "tj--amarilla", "tarjeta amarilla con su color");
+const sanciones = [
+  { id: "s1", activa: true, tipo: "de_por_vida", causa: "Suspendido de por vida", jugadores: jug("TELLO", "FACUNDO"), equipos: null },
+  { id: "s2", activa: true, tipo: "hasta_fecha", hasta: "2026-06-30", causa: "Hasta el 30/06/26", jugadores: jug("ATENCIO", "FRANCISCO"), equipos: eqX },
+  { id: "s3", activa: true, tipo: "partidos", partidos_total: 4, partidos_cumplidos: 2, causa: "4 partidos", jugadores: jug("CEBALLOS", "FRANCISCO"), equipos: eqY },
+];
+const hS = htmlSuspensiones({ sanciones, admin: true, hoy });
+contiene(hS, "TELLO, FACUNDO", "suspensión de un jugador sin equipo");
+contiene(hS, 'class="vencida"', "el administrador ve la vencida en gris");
+contiene(hS, 'data-accion="toggle-sancion"', "el administrador puede dar de baja");
+igual(hS.indexOf("ATENCIO") > hS.indexOf("CEBALLOS"), true, "las vencidas quedan al final");
+contiene(htmlSuspensiones({ sanciones: [], admin: false, hoy }), "No hay suspensiones vigentes", "mensaje cuando no hay suspensiones");
+const xss3 = htmlSuspensiones({ sanciones: [{ id: "x", activa: true, tipo: "de_por_vida", causa: "<script>alert(1)</script>", jugadores: jug("<b>A</b>", "B"), equipos: null }], admin: false, hoy });
+igual(xss3.includes("<script>") || xss3.includes("<b>A</b>"), false, "los textos cargados por el administrador se escapan");
+contiene(htmlTabs({ codigo: "B", activa: "goleadores" }), 'href="#/division/B/suspensiones"', "las pestañas de la Fase 3 están habilitadas");
 
 console.log(fallos ? `\n✘ ${fallos} prueba(s) fallaron` : "\n✔ Todas las pruebas pasaron");
 process.exit(fallos ? 1 : 0);

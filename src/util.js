@@ -51,3 +51,6 @@ export function formatoFechaLarga(iso) {
 
 // "2026-10-17" → "17/10"
 export const fechaCorta = (iso) => (iso ? `${Number(iso.slice(8, 10))}/${Number(iso.slice(5, 7))}` : "");
+
+// "2027-12-31" → "31/12/2027"
+export const formatoFechaNumerica = (iso) => (iso ? `${iso.slice(8, 10)}/${iso.slice(5, 7)}/${iso.slice(0, 4)}` : "");
