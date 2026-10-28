@@ -58,3 +58,20 @@ export async function cargarEstadistica({ temporadaId, divisionId, equipoId, ape
 export async function crearSancion(datos) { return ok(await db.from("sanciones").insert(datos)); }
 export async function actualizarSancion(id, cambios) { return ok(await db.from("sanciones").update(cambios).eq("id", id)); }
 export async function borrarSancion(id) { return ok(await db.from("sanciones").delete().eq("id", id)); }
+
+// ---------- Campeones y partidos de la fase de grupos ----------
+
+// Guarda (o corrige) un campeón. Si no se indica subcampeón, el que ya estaba no se toca.
+export async function registrarCampeon({ anio, divisionId, titulo, equipoId, subcampeonId }) {
+  const fila = { anio, division_id: divisionId, titulo, equipo_id: equipoId };
+  if (subcampeonId !== undefined) fila.subcampeon_id = subcampeonId;
+  return ok(await db.from("campeones").upsert(fila, { onConflict: "anio,division_id,titulo" }));
+}
+
+export async function borrarCampeon({ anio, divisionId, titulo }) {
+  return ok(await db.from("campeones").delete().eq("anio", anio).eq("division_id", divisionId).eq("titulo", titulo));
+}
+
+// Agrega un partido de la fase de grupos (para torneos cuyo fixture no está completo)
+export async function crearPartido(datos) { return ok(await db.from("partidos").insert(datos)); }
+export async function borrarPartido(id) { return ok(await db.from("partidos").delete().eq("id", id)); }

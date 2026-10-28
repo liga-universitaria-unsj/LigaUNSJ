@@ -13,7 +13,7 @@ function htmlTabla(filas, formato) {
   const cuerpo = filas.map((f, i) => `
     <tr class="${claseFila(i + 1, formato)}">
       <td class="pos">${i + 1}</td>
-      <td class="n"><span class="equipo">${escudo(f.equipo, 22)}<span>${esc(f.equipo.nombre)}</span></span></td>
+      <td class="n"><span class="equipo">${escudo(f.equipo, 22)}<span>${esc(f.equipo.nombre)}${f.equipo.descalificado ? ' <small class="tag-vencida">descalificado</small>' : ""}</span></span></td>
       <td>${f.pj}</td><td>${f.g}</td><td>${f.e}</td><td>${f.p}</td><td>${f.dg}</td>
       <td><b>${f.pts}</b>${f.desc ? `<sup class="desc" title="Descuento de ${f.desc} punto(s)">−${f.desc}</sup>` : ""}</td>
     </tr>`).join("");
@@ -29,11 +29,8 @@ export function htmlPosiciones({ formato = {}, equipos, partidos, descuentos }) 
 
   const zonas = [...new Set(equipos.map((e) => e.zona))].sort();
   const tarjetas = zonas.map((zona) => {
-    const filas = calcularTabla(
-      equipos.filter((e) => e.zona === zona),
-      partidos.filter((p) => p.zona === zona),
-      descuentos
-    );
+    // Se pasan todos los partidos: los que no son de esta zona se ignoran y los interzonales suman
+    const filas = calcularTabla(equipos.filter((e) => e.zona === zona), partidos, descuentos);
     const titulo = zona === "Única" ? "Posiciones" : `Posiciones · Zona ${esc(zona)}`;
     return `<div class="tarjeta"><h3>${titulo}</h3>${htmlTabla(filas, formato)}</div>`;
   }).join("");

@@ -28,7 +28,8 @@ function htmlPartido(p, porId, admin) {
   return `<div class="partido" data-id="${esc(p.id)}">
     <div class="partido__cuando">
       <span>${esc(cuando(p))}${p.cancha ? ` · ${esc(p.cancha)}` : ""}</span>
-      ${admin ? `<button class="mini" data-accion="reprogramar" data-id="${esc(p.id)}" title="Cambiar día, hora o cancha">✏️</button>` : ""}
+      ${admin ? `<span><button class="mini" data-accion="reprogramar" data-id="${esc(p.id)}" title="Cambiar día, hora o cancha">✏️</button>
+        <button class="mini" data-accion="borrar-partido" data-id="${esc(p.id)}" title="Borrar este partido">🗑</button></span>` : ""}
     </div>
     <div class="cruce">
       <span class="eq eq--local"><span>${esc(L?.nombre ?? "—")}</span>${escudo(L, 22)}</span>
@@ -46,7 +47,11 @@ const orden = (porId) => (a, b) =>
   (porId.get(a.local_id)?.nombre ?? "").localeCompare(porId.get(b.local_id)?.nombre ?? "", "es");
 
 export function htmlFixture({ equipos, partidos, admin = false }) {
-  if (!partidos.length) return `<p class="vacio">Todavía no hay partidos cargados.</p>`;
+  if (!partidos.length) {
+    return `<section class="fixture"><h2 class="seccion">Fixture</h2>
+      ${admin ? `<div class="stats-barra"><button data-accion="agregar-partido">＋ Agregar partido</button></div>` : ""}
+      <p class="vacio">Todavía no hay partidos cargados.</p></section>`;
+  }
 
   const porId = new Map(equipos.map((e) => [e.id, e]));
   const fechas = [...new Set(partidos.map((p) => p.nro_fecha))].sort((a, b) => a - b);
@@ -57,14 +62,20 @@ export function htmlFixture({ equipos, partidos, admin = false }) {
     const resumen = dias.size === 1 && !dias.has("") ? formatoFecha([...dias][0]) : (dias.size === 1 ? "" : "varios días");
 
     const zonas = [...new Set(deLaFecha.map((p) => p.zona))].sort();
+    const jugaron = new Set(deLaFecha.flatMap((p) => [p.local_id, p.visitante_id]));
     const bloques = zonas.map((zona) => {
       const lista = deLaFecha.filter((p) => p.zona === zona).sort(orden(porId));
-      const jugaron = new Set(lista.flatMap((p) => [p.local_id, p.visitante_id]));
-      const libres = equipos.filter((e) => e.zona === zona && !jugaron.has(e.id)).map((e) => e.nombre);
+      const deZona = equipos.filter((e) => e.zona === zona);
+      const sinJugar = deZona.filter((e) => !jugaron.has(e.id));
+      // Un equipo está "libre" solo si, como mucho, queda uno sin jugar en una zona impar;
+      // si faltan más, es que todavía no se cargaron todos los partidos de la fecha
+      const completa = zona !== "Interzonal" && sinJugar.length <= deZona.length % 2;
+      const etiquetaZona = zona.length === 1 ? `Zona ${esc(zona)}` : esc(zona);
       return `
-        ${zonas.length > 1 ? `<div class="zona-titulo">Zona ${esc(zona)}</div>` : ""}
+        ${zonas.length > 1 ? `<div class="zona-titulo">${etiquetaZona}</div>` : ""}
         ${lista.map((p) => htmlPartido(p, porId, admin)).join("")}
-        ${libres.length ? `<div class="libre">Libre: ${libres.map(esc).join(", ")}</div>` : ""}`;
+        ${completa && sinJugar.length ? `<div class="libre">Libre: ${sinJugar.map((e) => esc(e.nombre)).join(", ")}</div>` : ""}
+        ${admin && zona !== "Interzonal" && !completa && deZona.length ? `<div class="libre">Faltan cargar partidos de esta fecha (solo lo ve el administrador).</div>` : ""}`;
     }).join("");
 
     return `<div class="tarjeta fecha">
@@ -75,5 +86,7 @@ export function htmlFixture({ equipos, partidos, admin = false }) {
     </div>`;
   }).join("");
 
-  return `<section class="fixture"><h2 class="seccion">Fixture</h2><div class="fechas">${tarjetas}</div></section>`;
+  return `<section class="fixture"><h2 class="seccion">Fixture</h2>
+    ${admin ? `<div class="stats-barra"><button data-accion="agregar-partido">＋ Agregar partido</button></div>` : ""}
+    <div class="fechas">${tarjetas}</div></section>`;
 }

@@ -13,9 +13,16 @@ export async function cargarBase() {
 
 // Todo lo que necesita la pantalla de una división en un torneo
 export async function cargarDivision(temporadaId, divisionId) {
-  const [insc, partidos, descuentos] = await Promise.all([
-    db.from("inscripciones").select("zona, equipos(id, nombre, slug, escudo_url)")
-      .eq("temporada_id", temporadaId).eq("division_id", divisionId),
+  const pedirInscripciones = (columnas) => db.from("inscripciones").select(columnas)
+    .eq("temporada_id", temporadaId).eq("division_id", divisionId);
+
+  // "descalificado" se agrega con 06_fase4.sql; si todavía no se ejecutó, se sigue sin esa columna
+  let insc = await pedirInscripciones("zona, descalificado, equipos(id, nombre, slug, escudo_url)");
+  if (insc.error && /descalificado/.test(insc.error.message ?? "")) {
+    insc = await pedirInscripciones("zona, equipos(id, nombre, slug, escudo_url)");
+  }
+
+  const [partidos, descuentos] = await Promise.all([
     db.from("partidos").select("*")
       .eq("temporada_id", temporadaId).eq("division_id", divisionId).eq("fase", "grupos"),
     db.from("descuentos_puntos").select("equipo_id, puntos, motivo")
@@ -23,7 +30,7 @@ export async function cargarDivision(temporadaId, divisionId) {
   ]);
 
   return {
-    equipos: o(insc).map((r) => ({ ...r.equipos, zona: r.zona })),
+    equipos: o(insc).map((r) => ({ ...r.equipos, zona: r.zona, descalificado: Boolean(r.descalificado) })),
     partidos: o(partidos),
     descuentos: o(descuentos),
   };
@@ -72,4 +79,21 @@ export async function cargarSanciones(divisionId) {
 export async function cargarJugadores(equipoIds) {
   const ids = equipoIds.length ? `equipo_id.in.(${equipoIds.join(",")}),equipo_id.is.null` : "equipo_id.is.null";
   return o(await db.from("jugadores").select("id, apellido, nombre, equipo_id").or(ids).order("apellido").limit(5000));
+}
+
+// ---------- Campeones y camino al título ----------
+
+// Historial de campeones de todas las divisiones, más la lista de equipos para mostrar sus nombres
+export async function cargarCampeones() {
+  const [campeones, equipos] = await Promise.all([
+    db.from("campeones").select("*"),
+    db.from("equipos").select("id, nombre, slug, escudo_url"),
+  ]);
+  return { campeones: o(campeones), equipos: o(equipos) };
+}
+
+// Final de campeones y Superfinal de una división en un año (están dentro del torneo Clausura)
+export async function cargarTitulo(temporadaId, divisionId) {
+  return o(await db.from("partidos").select("*")
+    .eq("temporada_id", temporadaId).eq("division_id", divisionId).in("fase", ["finalistas", "superfinal"]));
 }
